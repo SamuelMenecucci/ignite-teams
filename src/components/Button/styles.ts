@@ -1,5 +1,7 @@
 import { TouchableOpacity } from "react-native";
-import styled from "styled-components/native";
+
+// https://styled-components.com/docs/api#css
+import styled, { css } from "styled-components/native";
 
 export type ButtonTypeStyleProps = "PRIMARY" | "SECONDARY";
 
@@ -21,8 +23,11 @@ export const Container = styled(TouchableOpacity)<Props>`
   align-items: center;
 `;
 
+//como eu estou utilizando o tema mais de uma vez para fazer a estilização, posso utilizar um helper do próprio styled-component (css) para que eu obtenha o meu tema por na função uma vez só e possa utiliza-lo com mais facilidade.
 export const Title = styled.Text`
-  font-size: ${({ theme }) => theme.FONT_SIZE.MD}px;
-  color: ${({ theme }) => theme.COLORS.WHITE};
-  font-family: ${({ theme }) => theme.FONT_FAMILY.BOLD};
+  ${({ theme }) => css`
+    font-size: ${theme.FONT_SIZE.MD}px;
+    color: ${theme.COLORS.WHITE};
+    font-family: ${theme.FONT_FAMILY.BOLD};
+  `}
 `;
