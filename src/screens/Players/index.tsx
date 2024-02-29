@@ -7,6 +7,8 @@ import { Input } from "@components/Input";
 import { Filter } from "@components/Filter";
 import { useState } from "react";
 import { PlayerCard } from "@components/PlayerCard";
+import { ListEmpty } from "@components/ListEmpty";
+import { Button } from "@components/Button";
 
 export function Players() {
   const [team, setTeam] = useState("Time A");
@@ -53,7 +55,19 @@ export function Players() {
         renderItem={({ item }) => (
           <PlayerCard name={item} onRemove={() => {}} />
         )}
+        ListEmptyComponent={() => (
+          <ListEmpty message="Não há pessoas nesse time." />
+        )}
+        showsVerticalScrollIndicator={false}
+        //dentro do contentContainerStyle eu posso passar um array e dessa forma fazer estilizações condicionais. aqui e passo o paddingBottom para que ao chegar no final da lista, tenha um espaçamento maior e o usuário saiba que não tem mais itens.
+        //passo o flex: 1 somente se o players estiver vazio, dessa forma o flex irá ser aplicado somente se não tiver nenhum player no estado.
+        contentContainerStyle={[
+          { paddingBottom: 100 },
+          players.length === 0 && { flex: 1 },
+        ]}
       />
+
+      <Button title="Remover turma" type="SECONDARY" />
     </Container>
   );
 }
