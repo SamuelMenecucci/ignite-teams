@@ -5,7 +5,7 @@ import { NewGroup } from "@screens/NewGroup";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
-//fazemos o approutes como um componente e utilizamos ele dentro do index de routes.
+//O approutes ´é feito como um componente e utilizado dentro do index de routes.
 export function AppRoutes() {
   return (
     <Navigator
