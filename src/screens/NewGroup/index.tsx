@@ -6,6 +6,8 @@ import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import { useNavigation } from "@react-navigation/native";
 import { groupCreate } from "@storage/group/groupCreate";
+import { AppError } from "src/utils/AppError";
+import { Alert } from "react-native";
 
 export function NewGroup() {
   const [group, setGroup] = useState("");
@@ -14,10 +16,21 @@ export function NewGroup() {
 
   async function handleNew() {
     try {
+      if (group.trim().length === 0) {
+        return Alert.alert("Novo Grupo", "Informe o nome da turma.");
+      }
+
       await groupCreate(group);
       navigation.navigate("players", { group });
     } catch (error) {
-      console.log(error);
+      //verificando se o erro que surgiu é uma instancia da classe criada por nós ou se é outro tipo de erro.
+      if (error instanceof AppError) {
+        Alert.alert("Novo Grupo", error.message);
+      } else {
+        //caso não seja um error que tenha sido tratado por mim eu disparo uma mensagem mais genérica, pois nem sempre o erro será amigavel para o usuário.
+        Alert.alert("Novo Grupo", "Não foi possível criar um novo grupo.");
+        console.log(error);
+      }
     }
   }
 
