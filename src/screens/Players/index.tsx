@@ -1,12 +1,12 @@
 import { useRoute } from "@react-navigation/native";
-import { Alert, FlatList } from "react-native";
+import { Alert, FlatList, TextInput } from "react-native";
 import { Header } from "@components/Header";
 import { Container, Form, HeaderList, NumberOfPlayers } from "./styles";
 import { Highlight } from "@components/Highlight";
 import { ButtonIcon } from "@components/ButtonIcon";
 import { Input } from "@components/Input";
 import { Filter } from "@components/Filter";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { PlayerCard } from "@components/PlayerCard";
 import { ListEmpty } from "@components/ListEmpty";
 import { Button } from "@components/Button";
@@ -28,6 +28,9 @@ export function Players() {
   const route = useRoute();
   const { group } = route.params as RouteParams;
 
+  //o useRef é utilizado para eu conseguir anotar a referencia de um componente e acessa esse componente na arvore de elemento, no caso, na dom virtual do react. passo o tipo dessa referencia como o próprio input que essa referencia pertence.
+  const newPlayerNameInputRef = useRef<TextInput>(null);
+
   async function handleAddPlayer() {
     if (newPlayerName.trim().length === 0) {
       return Alert.alert(
@@ -43,6 +46,11 @@ export function Players() {
 
     try {
       await playerAddByGroup(newPlayer, group);
+
+      //o blur é o que vai tirar o foco do input
+      newPlayerNameInputRef?.current?.blur();
+
+      setNewPlayerName("");
 
       fetchPlayersByTeam();
     } catch (error) {
@@ -81,10 +89,16 @@ export function Players() {
 
       <Form>
         <Input
+          inputRef={newPlayerNameInputRef}
           placeholder="Nome da pessoa"
           //como o input é referente ao nome de uma pessoa, desabilito o autoCorrect para que não tenhamos problema com o corretor, no caso de algum apelido ou algo do tipo.
           autoCorrect={false}
           onChangeText={setNewPlayerName}
+          value={newPlayerName}
+          //aqui eu digo qual função é executada quando o usuário clica no botão de submit pelo teclado do device
+          onSubmitEditing={handleAddPlayer}
+          //Determines how the return key should look. On Android you can also use returnKeyLabel.
+          returnKeyType="done"
         />
         <ButtonIcon icon="add" onPress={handleAddPlayer} />
       </Form>
