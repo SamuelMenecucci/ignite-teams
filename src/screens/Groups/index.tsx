@@ -26,7 +26,7 @@ import { Loading } from "@components/Loading";
 //O NavigationContainer compartilha o navigation com a minha aplicação, então caso eu não queira utilizar o useNavigation eu consigo pegar o navigation pelas props do meu componente, mas, para ficar mais enxuto, irei utilizar o useNavigation, pois sem ele eu preciso fazer toda essa tipagem acima.
 export function Groups() {
   const [isLoading, setIsLoading] = useState(true);
-  const [groups, setGroups] = useState(["Nome da turma"]);
+  const [groups, setGroups] = useState([""]);
 
   const navigation = useNavigation();
 
@@ -45,7 +45,7 @@ export function Groups() {
 
       setIsLoading(false);
     } catch (error) {
-      Alert.alert("Grupos", "Não foi possível carregar os grupos.");
+      Alert.alert("Turmas", "Não foi possível carregar as turmas.");
       console.log(error);
     }
   }

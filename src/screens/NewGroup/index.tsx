@@ -17,7 +17,7 @@ export function NewGroup() {
   async function handleNew() {
     try {
       if (group.trim().length === 0) {
-        return Alert.alert("Novo Grupo", "Informe o nome da turma.");
+        return Alert.alert("Nova turma", "Informe o nome da turma.");
       }
 
       await groupCreate(group);
@@ -25,10 +25,10 @@ export function NewGroup() {
     } catch (error) {
       //verificando se o erro que surgiu é uma instancia da classe criada por nós ou se é outro tipo de erro.
       if (error instanceof AppError) {
-        Alert.alert("Novo Grupo", error.message);
+        Alert.alert("Nova turma", error.message);
       } else {
         //caso não seja um error que tenha sido tratado por mim eu disparo uma mensagem mais genérica, pois nem sempre o erro será amigavel para o usuário.
-        Alert.alert("Novo Grupo", "Não foi possível criar um novo grupo.");
+        Alert.alert("Nova turma", "Não foi possível criar uma nova turma.");
         console.log(error);
       }
     }
