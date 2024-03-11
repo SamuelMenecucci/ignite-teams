@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { Alert, FlatList } from "react-native";
 import { Header } from "@components/Header";
 import { Container, Form, HeaderList, NumberOfPlayers } from "./styles";
@@ -6,14 +6,14 @@ import { Highlight } from "@components/Highlight";
 import { ButtonIcon } from "@components/ButtonIcon";
 import { Input } from "@components/Input";
 import { Filter } from "@components/Filter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlayerCard } from "@components/PlayerCard";
 import { ListEmpty } from "@components/ListEmpty";
 import { Button } from "@components/Button";
-import { groupRemove } from "@storage/group/groupRemove";
 import { AppError } from "src/utils/AppError";
 import { playerAddByGroup } from "@storage/player/playerAddByGroup";
-import { playersGetByGroup } from "@storage/player/playerGetByGroup";
+import { playersGetByGroupAndTeam } from "@storage/player/playersGetByGroupAndTeam";
+import { PlayerStorageDTO } from "@storage/player/PlayerStorageDTO";
 
 type RouteParams = {
   group: string;
@@ -22,7 +22,7 @@ type RouteParams = {
 export function Players() {
   const [newPlayerName, setNewPlayerName] = useState("");
   const [team, setTeam] = useState("Time A");
-  const [players, setPlayers] = useState(["Samuel"]);
+  const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
 
   //para acessar parametros passados pela rota eu utilizo o hook useRoute do @react-navigation/native
   const route = useRoute();
@@ -44,7 +44,7 @@ export function Players() {
     try {
       await playerAddByGroup(newPlayer, group);
 
-      const players = await playersGetByGroup(group);
+      fetchPlayersByTeam();
     } catch (error) {
       if (error instanceof AppError) {
         Alert.alert("Nova pessoa", error.message);
@@ -54,6 +54,24 @@ export function Players() {
       }
     }
   }
+
+  async function fetchPlayersByTeam() {
+    try {
+      const playersByTeam = await playersGetByGroupAndTeam(group, team);
+
+      setPlayers(playersByTeam);
+    } catch (error) {
+      Alert.alert(
+        "Pessoas",
+        "Não foi possível carregar as pessoas do time selecionado."
+      );
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchPlayersByTeam();
+  }, [team]);
 
   return (
     <Container>
@@ -90,9 +108,9 @@ export function Players() {
 
       <FlatList
         data={players}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-          <PlayerCard name={item} onRemove={() => {}} />
+          <PlayerCard name={item.name} onRemove={() => {}} />
         )}
         ListEmptyComponent={() => (
           <ListEmpty message="Não há pessoas nesse time." />
@@ -106,11 +124,7 @@ export function Players() {
         ]}
       />
 
-      <Button
-        title="Remover turma"
-        type="SECONDARY"
-        onPress={handleRemoveGroup}
-      />
+      <Button title="Remover turma" type="SECONDARY" />
     </Container>
   );
 }
